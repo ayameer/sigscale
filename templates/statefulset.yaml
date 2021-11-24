@@ -1,0 +1,99 @@
+## SigScale OCS Cluster StatefulSet
+##
+
+  kind: StatefulSet
+  apiVersion: apps/v1
+  metadata:
+    name:  {{.Values.controller.name }}
+    labels:
+      app.kubernetes.io/name: {{.Values.controller.name }}
+  spec:
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: {{.Values.controller.name }}
+    serviceName: {{ .Values.controller.spec.serviceName }}
+    replicas: {{ .Values.controller.spec.replicaCount }}
+    template:
+      metadata:
+        labels:
+          app.kubernetes.io/name: {{.Values.controller.name }}
+          app.kubernetes.io/component: {{ .Values.controller.component }}
+      spec:
+        terminationGracePeriodSeconds: {{ .Values.controller.spec.terminationGracePeriodSeconds }}
+        securityContext:
+          fsGroup: {{ .Values.controller.spec.fsGroup }}
+        initContainers:
+        - name: {{ .Values.controller.initContainers.name }}
+          image: {{ .Values.controller.initContainers.image }}
+          env:
+          - name: {{ .Values.controller.envs.name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.controller.envs.valueFrom.secretKeyRef.name }}
+                key: {{ .Values.controller.envs.valueFrom.secretKeyRef.key }}
+          stdin: {{ .Values.controller.initContainers.stdin }}
+          tty: {{ .Values.controller.initContainers.tty }}
+          command:
+          - bash
+            - "-c"
+            - |
+              set -e
+              [[ `hostname --fqdn` =~ (^.*)-([0-9]+)?.(.*)$ ]] || exit 1
+              hostbase=${BASH_REMATCH[1]}
+              ordinal=${BASH_REMATCH[2]}
+              domain=${BASH_REMATCH[3]}
+              if [[ ${ordinal} -eq 0 ]]; then
+                bin/initialize
+              else
+                bin/join ocs@${hostbase}-$((--ordinal)).${domain}
+              fi 
+          ports:
+          {{- range .Values.controller.initContainers.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+          {{- end }}
+          volumeMounts:
+          - name: {{ .Values.controller.initContainers.volumeMounts.name }}
+            mountPath: {{ .Values.controller.initContainers.volumeMounts.mountPath }}
+        containers:
+        - name: {{ .Values.controller.containers.name }}
+          image: {{ .Values.controller.containers.image }}
+          env:
+          - name: {{ .Values.controller.envs.name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.controller.envs.valueFrom.secretKeyRef.name }}
+                key: {{ .Values.controller.envs.valueFrom.secretKeyRef.key }}
+          stdin: {{ .Values.controller.containers.stdin }}
+          tty: {{ .Values.controller.containers.tty }}
+          ports:
+          {{- range .Values.controller.ports }}
+            - name: {{ .name }}
+              protocol: {{ .protocol }}
+              containerPort: {{ .containerPort }}
+          {{- end }}
+          volumeMounts:
+          - name: {{ .Values.controller.containers.volumeMounts.name }}
+            mountPath: {{ .Values.controller.containers.volumeMounts.mountPath }}
+          readinessProbe:
+            httpGet:
+              httpHeaders:
+              {{- range .Values.controller.readyStatus.readinessProbe.httpGet.httpHeaders }}
+                - name: {{ .name }}
+                  value: {{ .value }}
+              {{- end }}
+              path: {{ .Values.controller.readyStatus.readinessProbe.httpGet.path }}
+              port: {{ .Values.controller.readyStatus.readinessProbe.httpGet.port }}
+            initialDelaySeconds: {{ .Values.controller.readyStatus.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.controller.readyStatus.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.controller.readyStatus.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.controller.readyStatus.readinessProbe.failureThreshold }}
+    volumeClaimTemplates:
+    - metadata:
+        name: {{ .Values.controller.persistence.name }}
+      spec:
+        accessModes: {{ .Values.controller.persistence.accessMode}}
+        resources:
+          requests:
+            storage: {{ .Values.controller.persistence.size }}

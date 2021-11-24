@@ -1,0 +1,118 @@
+## SigScale OCS DIAMETER Accounting Service
+##
+kind: Service
+apiVersion: v1
+metadata:
+  name: diameter-acct
+  labels:
+    app.kubernetes.io/name: ocs
+spec:
+  selector:
+    app.kubernetes.io/component: ocs-node
+  ports:
+  - protocol: TCP
+    appProtocol: diameter
+    port: 3868
+    targetPort: diameter-acct
+
+## SigScale OCS DIAMETER Authentication Service
+##
+kind: Service
+apiVersion: v1
+metadata:
+  name: diameter-auth
+  labels:
+    app.kubernetes.io/name: ocs
+spec:
+  selector:
+    app.kubernetes.io/component: ocs-node
+  ports:
+  - protocol: TCP
+    appProtocol: diameter
+    port: 3869
+    targetPort: diameter-auth
+
+## SigScale OCS REST Service
+##
+kind: Service
+apiVersion: v1
+metadata:
+  name: ocs-rest
+  labels:
+    app.kubernetes.io/name: ocs
+spec:
+  selector:
+    app.kubernetes.io/component: ocs-node
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    appProtocol: http
+    port: 80
+    targetPort: rest
+
+## SigScale OCS SNMP Service
+##
+kind: Service
+apiVersion: v1
+metadata:
+  name: ocs-snmp
+  labels:
+    app.kubernetes.io/name: ocs
+spec:
+  selector:
+    app.kubernetes.io/component: ocs-node
+  ports:
+  - protocol: UDP
+    appProtocol: snmp
+    port: 4161
+    targetPort: snmp
+
+##
+## Erlang/OTP Cluster Headless Service
+##
+kind: Service
+apiVersion: v1
+metadata:
+  name: otp
+  labels:
+    app.kubernetes.io/name: ocs
+spec:
+  selector:
+    app.kubernetes.io/component: ocs-node
+  type: NodePort
+  clusterIP: None
+
+## SigScale OCS RADIUS Accounting Service
+##
+kind: Service
+apiVersion: v1
+metadata:
+  name: radius-acct
+  labels:
+    app.kubernetes.io/name: ocs
+spec:
+  selector:
+    app.kubernetes.io/component: ocs-node
+  ports:
+  - protocol: UDP
+    appProtocol: radius-acct
+    port: 1813
+    targetPort: radius-acct
+
+
+## SigScale OCS RADIUS Authorization Service
+##
+kind: Service
+apiVersion: v1
+metadata:
+  name: radius-auth
+  labels:
+    app.kubernetes.io/name: ocs
+spec:
+  selector:
+    app.kubernetes.io/component: ocs-node
+  ports:
+  - protocol: UDP
+    appProtocol: radius
+    port: 1812
+    targetPort: radius-auth

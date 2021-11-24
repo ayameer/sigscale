@@ -1,14 +1,14 @@
 apiVersion: v1
 entries:
-  sigscale-wncp:
+  sigscale:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2021-10-15T08:35:04.390579312+05:30"
+    created: "2021-11-24T22:41:38.22865899+05:30"
     description: A Helm chart for Kubernetes
-    digest: 3e733c960993447d5f5d3521afad30e8719e1598f4ee9a584e1de6265ab421d3
-    name: sigscale-wncp
+    digest: 7f5eed3ba1d0740f9e9973f1c6a41dd6a7523956eea90c66281e3b37f8593005
+    name: sigscale
     type: application
     urls:
-    - https://test002wncmp.github.io/sigscale/sigscale-wncp-0.1.0.tgz
+    - sigscale-0.1.0.tgz
     version: 0.1.0
-generated: "2021-10-15T08:35:04.38806229+05:30"
+generated: "2021-11-24T22:41:38.222882546+05:30"
