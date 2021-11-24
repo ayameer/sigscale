@@ -3,12 +3,12 @@ entries:
   sigscale:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2021-11-24T22:41:38.22865899+05:30"
+    created: "2021-11-24T22:48:29.184816408+05:30"
     description: A Helm chart for Kubernetes
-    digest: 7f5eed3ba1d0740f9e9973f1c6a41dd6a7523956eea90c66281e3b37f8593005
+    digest: 7fd34c73f5bf427ebb5c59ddb84ce40d425fdcdcb37d73cf3adee2fa13c2be41
     name: sigscale
     type: application
     urls:
     - sigscale-0.1.0.tgz
     version: 0.1.0
-generated: "2021-11-24T22:41:38.222882546+05:30"
+generated: "2021-11-24T22:48:29.181082143+05:30"
